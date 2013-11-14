@@ -1,6 +1,11 @@
-provides "linux/vserver"
-require_plugin "virtualization"
-if virtualization[:system] == "linux-vserver"
+# Author: John Alberts
+#
+# Plugin to give more information about the vserver host and guest
+
+provides 'virtualization/vserver'
+require_plugin 'virtualization'
+
+if virtualization[:system] == 'linux-vserver'
   virtualization[:vserver] = Mash.new
   vserver_info = from("vserver-info - SYSINFO")
   vserver_stat = from("vserver-stat")
@@ -10,7 +15,6 @@ if virtualization[:system] == "linux-vserver"
   guest_ram_total = 0
   guest_swap_total = 0
   guest_cpuset_total = []
-
 
   virtualization[:vserver][:apiversion] = api
   virtualization[:vserver][:config_dir] = config_dir
@@ -48,7 +52,7 @@ if virtualization[:system] == "linux-vserver"
       tempnum = "20"
       virtualization[:vserver][:guests][guestname][:cgroup] = Mash.new
       { "cpuset.cpus" => "cpuset",
-  "memory.limit_in_bytes" => "ram",
+        "memory.limit_in_bytes" => "ram",
         "memory.memsw.limit_in_bytes" => "swap"
       }.each do |limit,limit_name|
         if File.exist?("#{config_dir}/#{guestdir}/cgroup/#{limit}")
@@ -85,4 +89,3 @@ if virtualization[:system] == "linux-vserver"
   end
 
 end
-
